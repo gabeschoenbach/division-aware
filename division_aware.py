@@ -12,6 +12,7 @@ from gerrychain.tree import (
 from collections import deque
 import random
 import pandas as pd
+import os
 
 def division_random_spanning_tree(graph, division_tuples=[("COUNTYFP10", 1)]):
     """
