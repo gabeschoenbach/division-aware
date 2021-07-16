@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --job-name="guided-aware"
+#SBATCH --job-name="anti"
 #SBATCH --time=0-20:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=4

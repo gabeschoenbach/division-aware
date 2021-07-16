@@ -37,7 +37,7 @@ def guided_acceptance_factory(elections):
         parent_v = proportionality_vector(parent, elections)
         child_score = L1(child_v)
         parent_score = L1(parent_v)
-        probability = min([1*math.exp(30*(parent_score - child_score)), 1])
+        probability = min([1*math.exp(200*(parent_score - child_score)), 1])
         if random.random() < probability:
             return True
         else:
@@ -52,7 +52,7 @@ def anti_guided_acceptance_factory(elections):
         parent_v = proportionality_vector(parent, elections)
         child_score = L1(child_v)
         parent_score = L1(parent_v)
-        probability = min([1*math.exp(-30*(parent_score - child_score)), 1])
+        probability = min([1*math.exp(-200*(parent_score - child_score)), 1])
         if random.random() < probability:
             return True
         else:
@@ -96,7 +96,7 @@ guided_anti_chain = MarkovChain(
                     accept = anti_acceptance,
                     initial_state = initial_partition,
                     total_steps = steps)
-
+'''
 split_counties = []
 split_munis = []
 proportionality_L1s = []
@@ -119,7 +119,8 @@ df.to_csv('./chain_proportionalities/neutral_split_counties.csv', index=False)
 df = pd.DataFrame(split_munis)
 df.to_csv('./chain_proportionalities/neutral_split_munis.csv', index=False)
 save_partition_as_districtr_csv(graph, best_neutral_plan, "Code-2", "best_neutral_plan")
-
+'''
+'''
 split_counties = []
 split_munis = []
 proportionality_L1s = []
@@ -136,13 +137,14 @@ for i, part in enumerate(guided_pro_chain.with_progress_bar()):
         lowest_L1 = proportionality_L1
         best_pro_plan = part
 df = pd.DataFrame(proportionality_L1s)
-df.to_csv('./chain_proportionalities/pro_L1s.csv', index=False)
+df.to_csv('./chain_proportionalities/pro_L1s_200.csv', index=False)
 df = pd.DataFrame(split_counties)
-df.to_csv('./chain_proportionalities/pro_split_counties.csv', index=False)
+df.to_csv('./chain_proportionalities/pro_split_counties_200.csv', index=False)
 df = pd.DataFrame(split_munis)
-df.to_csv('./chain_proportionalities/pro_split_munis.csv', index=False)    
-save_partition_as_districtr_csv(graph, best_pro_plan, "Code-2", "best_pro_plan")
-    
+df.to_csv('./chain_proportionalities/pro_split_munis_200.csv', index=False)    
+save_partition_as_districtr_csv(graph, best_pro_plan, "Code-2", "best_pro_plan_200")
+'''    
+
 split_counties = []
 split_munis = []
 proportionality_L1s = []
@@ -159,10 +161,10 @@ for i, part in enumerate(guided_anti_chain.with_progress_bar()):
         highest_L1 = proportionality_L1
         worst_anti_plan = part
 df = pd.DataFrame(proportionality_L1s)
-df.to_csv('./chain_proportionalities/anti_L1s.csv', index=False)
+df.to_csv('./chain_proportionalities/anti_L1s_200.csv', index=False)
 df = pd.DataFrame(split_counties)
-df.to_csv('./chain_proportionalities/anti_split_counties.csv', index=False)
+df.to_csv('./chain_proportionalities/anti_split_counties_200.csv', index=False)
 df = pd.DataFrame(split_munis)
-df.to_csv('./chain_proportionalities/anti_split_munis.csv', index=False)
+df.to_csv('./chain_proportionalities/anti_split_munis_200.csv', index=False)
 
-save_partition_as_districtr_csv(graph, worst_anti_plan, "Code-2", "worst_anti_plan")
+save_partition_as_districtr_csv(graph, worst_anti_plan, "Code-2", "worst_anti_plan_200")
