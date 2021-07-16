@@ -21,7 +21,7 @@ munis, nodes_by_muni = get_divisions(graph, "COUSUB_ID")
 counties, nodes_by_county = get_divisions(graph, "COUNTYFP")
 
 epsilon = 0.02
-steps = 100
+steps = 200000 
 first_check_division = True
 POP_COL = "TOTPOP19"
 division_tuples = [("COUNTYFP", 2), ("COUSUB_ID", 1)]
@@ -118,6 +118,7 @@ df = pd.DataFrame(split_counties)
 df.to_csv('./chain_proportionalities/neutral_split_counties.csv', index=False)
 df = pd.DataFrame(split_munis)
 df.to_csv('./chain_proportionalities/neutral_split_munis.csv', index=False)
+save_partition_as_districtr_csv(graph, best_neutral_plan, "Code-2", "best_neutral_plan")
 
 split_counties = []
 split_munis = []
@@ -140,6 +141,7 @@ df = pd.DataFrame(split_counties)
 df.to_csv('./chain_proportionalities/pro_split_counties.csv', index=False)
 df = pd.DataFrame(split_munis)
 df.to_csv('./chain_proportionalities/pro_split_munis.csv', index=False)    
+save_partition_as_districtr_csv(graph, best_pro_plan, "Code-2", "best_pro_plan")
     
 split_counties = []
 split_munis = []
@@ -163,6 +165,4 @@ df.to_csv('./chain_proportionalities/anti_split_counties.csv', index=False)
 df = pd.DataFrame(split_munis)
 df.to_csv('./chain_proportionalities/anti_split_munis.csv', index=False)
 
-save_partition_as_districtr_csv(graph, best_neutral_plan, "Code-2", "best_netural_plan")
-save_partition_as_districtr_csv(graph, best_pro_plan, "Code-2", "best_pro_plan")
 save_partition_as_districtr_csv(graph, worst_anti_plan, "Code-2", "worst_anti_plan")
