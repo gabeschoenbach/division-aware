@@ -21,7 +21,7 @@ munis, nodes_by_muni = get_divisions(graph, "COUSUB_ID")
 counties, nodes_by_county = get_divisions(graph, "COUNTYFP")
 
 epsilon = 0.02
-steps = 200000 
+steps = 100000 
 first_check_division = True
 POP_COL = "TOTPOP19"
 division_tuples = [("COUNTYFP", 2), ("COUSUB_ID", 1)]
@@ -72,7 +72,8 @@ proposal = partial(recom,
                                    first_check_division = first_check_division),
                    node_repeats = 2)
 
-elections = states["WI"]["elections"].keys()
+#elections = states["WI"]["elections"].keys()
+elections = ["GOV18", "SEN18", "PRES16", "SEN16", "GOV14", "PRES12", "SEN12", "GOV12"] # only use the elections that districtr has
 pro_acceptance = guided_acceptance_factory(elections)
 anti_acceptance = anti_guided_acceptance_factory(elections)
 
@@ -168,3 +169,4 @@ df = pd.DataFrame(split_munis)
 df.to_csv('./chain_proportionalities/anti_split_munis_200.csv', index=False)
 
 save_partition_as_districtr_csv(graph, worst_anti_plan, "Code-2", "worst_anti_plan_200")
+
