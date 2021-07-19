@@ -57,7 +57,7 @@ def division_random_spanning_tree(graph, division_tuples=[("COUNTYFP10", 1)]):
 #             leaves.append(parent)
 #     return None
 
-def division_find_balanced_edge_cuts_memoization(h, choice=random.choice, division_col=None):
+def division_find_balanced_edge_cuts_memoization(h, choice=random.choice, division_tuples=None):
     root = choice([x for x in h if h.degree(x) > 1])
     pred = predecessors(h.graph, root)
     succ = successors(h.graph, root)
@@ -80,6 +80,8 @@ def division_find_balanced_edge_cuts_memoization(h, choice=random.choice, divisi
             else:
                 subtree_pops[next_node] = h.population[next_node]
     cuts = []
+    
+    best_split_score = 0 
     for node, tree_pop in subtree_pops.items():
         def part_nodes(start):
             nodes = set()
@@ -95,17 +97,30 @@ def division_find_balanced_edge_cuts_memoization(h, choice=random.choice, divisi
             return nodes
 
         is_balanced_A = abs(tree_pop - h.ideal_pop) <= h.ideal_pop * h.epsilon
-        is_balanced_B = abs((total_pop - tree_pop) - h.ideal_pop) <= h.ideal_pop * h.epsilon # is_balanced_A <=> is_balanced_B ??
+        is_balanced_B = abs((total_pop - tree_pop) - h.ideal_pop) <= h.ideal_pop * h.epsilon
 
         parent = pred[node]
-        if division_col is not None:
-            is_balanced_A = (h.graph.nodes[parent][division_col] != h.graph.nodes[node][division_col]) and is_balanced_A
-            is_balanced_B = (h.graph.nodes[parent][division_col] != h.graph.nodes[node][division_col]) and is_balanced_B
-
-        if is_balanced_A:
-            cuts.append(Cut(edge=(node, pred[node]), subset=part_nodes(node)))
-        elif is_balanced_B:
-            cuts.append(Cut(edge=(node, pred[node]), subset=set(h.graph.nodes) - part_nodes(node)))
+        if division_tuples is not None:
+            division_cols = [tup[0] for tup in division_tuples]
+            # score function to prefer higher ranked divisions:
+            # [8, 4, 2, 1] — example with 4 divisions
+            split_score = 0
+            for i, division_col in enumerate(division_cols):
+                if h.graph.nodes[parent][division_col] != h.graph.nodes[node][division_col]:
+                    split_score += 2 ** (len(division_cols) - i - 1) # descending powers starting at len(division_cols) - 1
+            if split_score > best_split_score and (is_balanced_A or is_balanced_B):
+                best_split_score = split_score
+                cuts = []
+                part_subset = part_nodes(node) if is_balanced_A else set(h.graph.nodes) - part_nodes(node)
+                cuts.append(Cut(edge=(node, pred[node]), subset=part_subset))
+            elif split_score == best_split_score and (is_balanced_A or is_balanced_B):
+                part_subset = part_nodes(node) if is_balanced_A else set(h.graph.nodes) - part_nodes(node)
+                cuts.append(Cut(edge=(node, pred[node]), subset=part_subset))
+        else:
+            if is_balanced_A:
+                cuts.append(Cut(edge=(node, pred[node]), subset=part_nodes(node)))
+            elif is_balanced_B:
+                cuts.append(Cut(edge=(node, pred[node]), subset=set(h.graph.nodes) - part_nodes(node)))
 
     return cuts
 
@@ -139,12 +154,11 @@ def division_bipartition_tree(
             counter +=1
         h = PopulatedGraph(spanning_tree, populations, pop_target, epsilon)
         if len(division_tuples) > 0 and first_check_division and restarts == 0:
-            sorted_division_tuples = sorted(division_tuples, key=lambda x:x[1])
-            preferred_division_col = sorted_division_tuples[-1][0]
-            possible_cuts = division_find_balanced_edge_cuts_memoization(h, choice=choice, division_col=preferred_division_col)
+            sorted_division_tuples = sorted(division_tuples, key=lambda x:x[1], reverse=True)
+            possible_cuts = division_find_balanced_edge_cuts_memoization(h, choice=choice, division_tuples=sorted_division_tuples)
         if len(possible_cuts) == 0:
             h = PopulatedGraph(spanning_tree, populations, pop_target, epsilon)
-            possible_cuts = division_find_balanced_edge_cuts_memoization(h, choice=choice, division_col=None)
+            possible_cuts = division_find_balanced_edge_cuts_memoization(h, choice=choice)
         restarts += 1
 
     if counter >= attempts_before_giveup:
