@@ -14,9 +14,9 @@ import click
 import random
 from division_aware import *
 
-graph = Graph.from_json("shapes/WI_with_cousub.json")
-munis, nodes_by_muni = get_divisions(graph, "COUSUB_ID")
-counties, nodes_by_county = get_divisions(graph, "COUNTYFP")
+#graph = Graph.from_json("shapes/wisconsin2020_graph_cousub.json")
+#munis, nodes_by_muni = get_divisions(graph, "COUSUB_ID")
+#counties, nodes_by_county = get_divisions(graph, "COUNTYFP")
 
 @click.command()
 @click.option('-epsilon', default=0.05)
@@ -24,27 +24,36 @@ counties, nodes_by_county = get_divisions(graph, "COUNTYFP")
 @click.option('-first_check_division', default=True)
 @click.option('-division_aware', default=True)
 @click.option('-tuple_type', default="MUNI_PREF")
-def run_chain(epsilon, steps, first_check_division, division_aware, tuple_type):
+@click.option('-cousub_type', default="COUSUB_ID")
+def run_chain(epsilon, steps, first_check_division, division_aware, tuple_type, cousub_type):
+
+    graph = Graph.from_json("shapes/wisconsin2020_graph_cousub.json")
+    munis, nodes_by_muni = get_divisions(graph, cousub_type)
+    counties, nodes_by_county = get_divisions(graph, "COUNTYFP")
     random.seed()
     division_aware = division_aware == "true"
     first_check_division = first_check_division == "true"
     print(f"Running a Markov Chain with:")
     print(f"DIVISION_AWARE = {division_aware}")
     print(f"TUPLE_TYPE = {tuple_type}")
+    print(f"COUSUB_TYPE = {cousub_type}")
     print(f"FIRST_CHECK_DIVISION = {first_check_division}")
     print(f"EPSILON = {epsilon}")
     print(f"LENGTH = {steps}")
-    run_name = f"{division_aware}_{tuple_type}_{first_check_division}_{epsilon}_{steps}"
+    run_name = f"{division_aware}_{tuple_type}_{first_check_division}_{cousub_type}_{epsilon}_{steps}"
 
     POP_COL = "TOTPOP19"
-    if tuple_type == "COUNTYFP" or tuple_type == "COUSUB_ID":
-        division_tuples = [(tuple_type, 1)]
+    if tuple_type == "COUNTYFP" or tuple_type == "COUSUB_ID" 
+        if tuple_type == "COUNTYFP":
+            division_tuples = [(tuple_type, 1)]
+        else:
+            division_tuples = [(cousub_type, 1)]
     elif tuple_type == "BOTH_EQUAL":
-        division_tuples = [("COUNTYFP", 1), ("COUSUB_ID", 1)]
+        division_tuples = [("COUNTYFP", 1), (cousub_type, 1)]
     elif tuple_type == "COUNTY_PREF":
-        division_tuples = [("COUNTYFP", 2), ("COUSUB_ID", 1)]
+        division_tuples = [("COUNTYFP", 2), (cousub_type, 1)]
     elif tuple_type == "MUNI_PREF":
-        division_tuples = [("COUNTYFP", 1), ("COUSUB_ID", 2)]
+        division_tuples = [("COUNTYFP", 1), (cousub_type, 2)]
     else:
         raise ValueError("ERROR: `tuple_type` needs to be one of 'COUNTYFP', COUSUB_ID', 'BOTH_EQUAL', 'COUNTY_PREF', or 'MUNI_PREF'.")
 
@@ -77,7 +86,7 @@ def run_chain(epsilon, steps, first_check_division, division_aware, tuple_type):
     split_munis = []
     for i, part in enumerate(chain):
         split_counties.append(num_division_splits(graph, part, counties, nodes_by_county, division_col="COUNTYFP"))
-        split_munis.append(num_division_splits(graph, part, munis, nodes_by_muni, division_col="COUSUB_ID"))
+        split_munis.append(num_division_splits(graph, part, munis, nodes_by_muni, division_col=cousub_type))
         if i % 1000 == 0:
             print(i)
 
