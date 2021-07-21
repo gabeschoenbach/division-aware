@@ -43,7 +43,7 @@ def run_chain(epsilon, steps, first_check_division, division_aware, tuple_type, 
     run_name = f"{division_aware}_{tuple_type}_{first_check_division}_{cousub_type}_{epsilon}_{steps}"
 
     POP_COL = "TOTPOP19"
-    if tuple_type == "COUNTYFP" or tuple_type == "COUSUB_ID" 
+    if tuple_type == "COUNTYFP" or tuple_type == "COUSUB_ID":
         if tuple_type == "COUNTYFP":
             division_tuples = [(tuple_type, 1)]
         else:
