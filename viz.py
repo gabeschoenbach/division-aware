@@ -44,19 +44,22 @@ def annotate_plot(ax, title):
     ax[1][1].legend()
     plt.suptitle(title, fontsize=32)
     filename = re.sub(r'[^A-Za-z0-9 %]+', '', title)
-    plt.savefig(f"plots_500k/{filename.replace(' ', '_')}.png", bbox_inches='tight')
-    # plt.show()
+    plt.savefig(f"plots_07-21/{filename.replace(' ', '_')}.png", bbox_inches='tight')
+    plt.show()
     return
 
-def plot_run(ax, epsilon, steps, division_aware, first_check_division, tuple_type):
-    run = f"{division_aware}_{tuple_type}_{first_check_division}_{epsilon}_{steps}"
+def plot_run(ax, epsilon, steps, division_aware, first_check_division, tuple_type, subdivision_type=None):
+    if subdivision_type is None:
+        run = f"{division_aware}_{tuple_type}_{first_check_division}_{epsilon}_{steps}"
+    else:
+        run = f"{division_aware}_{tuple_type}_{first_check_division}_{subdivision_type}_{epsilon}_{steps}"
     if division_aware:
         label = names[tuple_type]
     else:
         label = "NEUTRAL"
-    amount_to_darken = sum([division_aware, first_check_division, epsilon==0.05])
-    run_color = change_color(colors[label], 1 + (amount_to_darken/10)) # figure out a way to not hard-code
-    run_color = colors[label]
+#     amount_to_darken = sum([division_aware, first_check_division, epsilon==0.05])
+#     run_color = change_color(colors[label], 1 + (amount_to_darken/10)) # figure out a way to not hard-code
+#     run_color = colors[label]
     df = pd.read_csv(f"outputs/{run}.csv", index_col=0)
     counties_data = df['split_counties']
     munis_data = df['split_munis']
@@ -64,6 +67,13 @@ def plot_run(ax, epsilon, steps, division_aware, first_check_division, tuple_typ
     if first_check_division:
         label += ", first checking division"
     label += f", {100*epsilon}%"
+    if subdivision_type is None:
+        label += ", old"
+    elif subdivision_type == "COUSUB":
+        label += ", COUSUB"
+    elif subdivision_type == "COUSUB_ID":
+        label += ", COUSUB_ID"
+
     ax[0][0].plot(counties_data,
                     alpha=alpha,
                     # color=run_color,
@@ -88,14 +98,15 @@ def plot_run(ax, epsilon, steps, division_aware, first_check_division, tuple_typ
 if __name__=="__main__":
     for epsilon in [0.05]:
         for steps in [500000]:
-            for division_aware in [True, False]:
+            for division_aware in [True]:
                 if not division_aware:
                     plot_run(ax, epsilon, steps, division_aware, False, "BOTH_EQUAL")
                     continue
-                for first_check_division in [False]:
-                    for tuple_type in ["COUNTYFP", "COUSUB_ID", "COUNTY_PREF", "BOTH_EQUAL", "MUNI_PREF"]:
-                    # for tuple_type in ["COUNTY_PREF", "BOTH_EQUAL", "MUNI_PREF"]:
-                        plot_run(ax, epsilon, steps, division_aware, first_check_division, tuple_type)
+                for first_check_division in [True]:
+#                     for tuple_type in ["COUNTYFP", "COUSUB_ID", "COUNTY_PREF", "BOTH_EQUAL", "MUNI_PREF"]:
+                    for tuple_type in ["COUNTY_PREF", "BOTH_EQUAL", "MUNI_PREF"]:
+                        plot_run(ax, epsilon, steps, division_aware, first_check_division, tuple_type, "COUSUB")
+                        plot_run(ax, epsilon, steps, division_aware, first_check_division, tuple_type, "COUSUB_ID")
                         
-    annotate_plot(ax, "WI, 5% pop. dev., aware vs. neutral, first check division false")
+    annotate_plot(ax, "WI, 5% pop. dev., division aware true, first check division true, new code, COUSUB vs. COUSUB_ID")
 

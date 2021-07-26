@@ -226,6 +226,13 @@ states = {
         "POP_COL": "TOTPOP19",
         "ENACTED_COL": ["CD"],
     },
+    "MA": {
+        "elections": {
+            "SEN10":["SEN10D", "SEN10R"],
+        },
+        "POP_COL": "TOTPOP",
+        "ENACTED_COL": ["CD10"],
+    },
 }
 
 def make_partition_from_districtr_csv(state, graph, file, unit_col="Code-2"):
