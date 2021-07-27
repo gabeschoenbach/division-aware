@@ -59,7 +59,7 @@ def run_chain(epsilon, steps, aware, acceptance):
     elif acceptance == "P2":
         optimizing_func = P2
     else:
-        optimizing_func = len 
+        optimizing_func = len
     
     chain = MarkovChain(
                         proposal = proposal,
@@ -98,7 +98,7 @@ def run_chain(epsilon, steps, aware, acceptance):
                        'Ds':Ds})
     print(f"Printing to {run_name}.csv")
 
-    df.to_csv(f"outputs/{run_name}.csv", index_label="step")
+    df.to_csv(f"pmc_outputs/{run_name}.csv", index_label="step")
 
     save_partition_as_districtr_csv(graph, best_plan, "Code-2", f"{run_name}_best")
 
