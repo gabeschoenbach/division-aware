@@ -1,6 +1,6 @@
 for epsilon in 0.02 0.05
 do
-  for steps in 300000 
+  for steps in 100000 500000
   do
     for aware in "true" "false"
     do

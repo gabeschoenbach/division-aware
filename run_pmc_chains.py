@@ -74,7 +74,8 @@ def run_chain(epsilon, steps, aware, acceptance):
     P1s = []
     P2s = []
     Ds = []
-    best_score = optimizing_func(initial_partition, elections)
+    if acceptance != "always":
+      best_score = optimizing_func(initial_partition, elections)
     best_plan = initial_partition
     for i, part in enumerate(chain):
         split_counties.append(num_division_splits(graph, part, counties, nodes_by_county, division_col="COUNTYFP"))
