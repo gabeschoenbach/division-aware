@@ -48,7 +48,7 @@ def guided_acceptance_factory(elections, acceptance='D'):
         parent = partition.parent
         child_P2 = P2(partition, elections)
         parent_P2 = P2(parent, elections)
-        probability = min([math.exp(180*(parent_P2 - child_P2)), 1])
+        probability = min([math.exp(800*(parent_P2 - child_P2)), 1])
         if random.random() < probability:
             return True
         else:

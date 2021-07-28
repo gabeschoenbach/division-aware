@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#SBATCH --job-name="always-pmc"
-#SBATCH --time=0-12:00:00
+#SBATCH --job-name="pmc-300k"
+#SBATCH --time=1-12:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=4
 #SBATCH --mem=8000
