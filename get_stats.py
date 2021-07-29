@@ -44,9 +44,27 @@ for arg in sys.argv[1:]:
     
     # print(f"\n{arg}\n  Cut edges: {cut_edges}\n  Split counties: {split_counties}\n  Split munis: {split_munis}\n  R-won seats: {R_won_seats}\n  R excess seats over proportionality: {round(R_excess_seats)}\n  Average absolute excess seats in one election: {round(abs_ave_excess)}\n  Absolute excess seats over 8 elections: {round(abs_excess_over_8)}\n  Number of districts with >40% POC: {num_POC_dists}\n  P1: {my_P1:.3f}\n  P2: {my_P2:.3f}\n  D: {my_D:.3f}")
 
-    print(f"\n{arg}\n R-won seats: {R_won_seats}\n  R excess seats over proportionality: {round(R_excess_seats)}\n  Average absolute excess seats in one election: {round(abs_ave_excess)}\n  Absolute excess seats over 8 elections: {round(abs_excess_over_8)}\n")
+    print(f"\n{arg}\n  R-won seats: {R_won_seats}\n  R excess seats over proportionality: {round(R_excess_seats)}\n  Average absolute excess seats in one election: {round(abs_ave_excess)}\n  Absolute excess seats over 8 elections: {round(abs_excess_over_8)}")
 
     ideal_pop = sum(partition.population.values()) / len(partition)
     max_dev = max({d:abs(partition.population[d] - ideal_pop) / ideal_pop for d in partition.population.keys()}.values())
-    print(f"max. pop. dev = {100*max_dev:0.2f}")
-
+    print(f"  max. pop. dev = {100*max_dev:0.2f}")
+    seats_by_election = [partition[election].wins("Rep") for election in elections]
+    print(f"  R seats by election: {seats_by_election}")
+    
+    assignment = dict(partition.assignment)
+    county_pieces = 0
+    for county in counties:
+        districts = set()
+        for node in nodes_by_county[county]:
+            districts.add(assignment[node])
+        county_pieces += len(districts)
+        
+    muni_pieces = 0
+    for muni in munis:
+        districts = set()
+        for node in nodes_by_muni[muni]:
+            districts.add(assignment[node])
+        muni_pieces += len(districts)
+    
+    print(f"  county pieces: {county_pieces}\n  muni pieces: {muni_pieces}")
