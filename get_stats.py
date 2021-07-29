@@ -42,4 +42,11 @@ for arg in sys.argv[1:]:
     my_P2 = P2(partition, elections)
     my_D = D(partition, elections)
     
-    print(f"\n{arg}\n  Cut edges: {cut_edges}\n  Split counties: {split_counties}\n  Split munis: {split_munis}\n  R-won seats: {R_won_seats}\n  R excess seats over proportionality: {R_excess_seats:.3f}\n  Average absolute excess seats in one election: {abs_ave_excess:.3f}\n  Absolute excess seats over 8 elections: {abs_excess_over_8:.3f}\n  Number of districts with >40% POC: {num_POC_dists}\n  P1: {my_P1:.3f}\n  P2: {my_P2:.3f}\n  D: {my_D:.3f}")
+    # print(f"\n{arg}\n  Cut edges: {cut_edges}\n  Split counties: {split_counties}\n  Split munis: {split_munis}\n  R-won seats: {R_won_seats}\n  R excess seats over proportionality: {round(R_excess_seats)}\n  Average absolute excess seats in one election: {round(abs_ave_excess)}\n  Absolute excess seats over 8 elections: {round(abs_excess_over_8)}\n  Number of districts with >40% POC: {num_POC_dists}\n  P1: {my_P1:.3f}\n  P2: {my_P2:.3f}\n  D: {my_D:.3f}")
+
+    print(f"\n{arg}\n R-won seats: {R_won_seats}\n  R excess seats over proportionality: {round(R_excess_seats)}\n  Average absolute excess seats in one election: {round(abs_ave_excess)}\n  Absolute excess seats over 8 elections: {round(abs_excess_over_8)}\n")
+
+    ideal_pop = sum(partition.population.values()) / len(partition)
+    max_dev = max({d:abs(partition.population[d] - ideal_pop) / ideal_pop for d in partition.population.keys()}.values())
+    print(f"max. pop. dev = {100*max_dev:0.2f}")
+
