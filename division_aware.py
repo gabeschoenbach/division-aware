@@ -235,6 +235,12 @@ states = {
     },
 }
 
+def step(partition):
+    if partition.parent is None:
+        return 0
+    else:
+        return partition.parent["step"] + 1
+
 def make_partition_from_districtr_csv(state, graph, file, unit_col="Code-2"):
     df = pd.read_csv(f"assignments/{file}.csv", header=None)
     df.columns = [unit_col, "district"]
@@ -246,6 +252,7 @@ def make_partition_from_districtr_csv(state, graph, file, unit_col="Code-2"):
     elections = states[state]["elections"]
     updaters = {}
     updaters["population"] = Tally(POP_COL, alias="population")
+    updaters["step"] = step
     for VAP_COL in VAP_COLUMNS:
         updaters[VAP_COL] = Tally(VAP_COL)
     updaters["NH_WHITE"] = Tally("NH_WHITE")

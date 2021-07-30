@@ -32,33 +32,45 @@ def D(partition, elections):
     seat_share = num_R_seats / (num_dists * len(elections))
     return seat_share
 
-def guided_acceptance_factory(elections, acceptance='D'):
+def guided_acceptance_factory(elections, steps, acceptance='D'):
     
     def accept_more_P1(partition):
+        if partition.step % int(steps / 5) in range(int(steps / 25)):
+            return True
+        else:
+            C = 1800
         parent = partition.parent
         child_P1 = P1(partition, elections)
         parent_P1 = P1(parent, elections)
-        probability = min([math.exp(1800*(parent_P1 - child_P1)), 1])
+        probability = min([math.exp(C*(parent_P1 - child_P1)), 1])
         if random.random() < probability:
             return True
         else:
             return False
 
     def accept_more_P2(partition):
+        if partition.step % int(steps / 5) in range(int(steps / 25)):
+            return True
+        else:
+            C = 800
         parent = partition.parent
         child_P2 = P2(partition, elections)
         parent_P2 = P2(parent, elections)
-        probability = min([math.exp(800*(parent_P2 - child_P2)), 1])
+        probability = min([math.exp(C*(parent_P2 - child_P2)), 1])
         if random.random() < probability:
             return True
         else:
             return False
         
     def accept_more_D(partition):
+        if partition.step % int(steps / 5) in range(int(steps / 25)):
+            return True
+        else:
+            C = 1800
         parent = partition.parent
         child_D = D(partition, elections)
         parent_D = D(parent, elections)
-        probability = min([math.exp(1800*(parent_D - child_D)), 1])
+        probability = min([math.exp(C*(parent_D - child_D)), 1])
         if random.random() < probability:
             return True
         else:
