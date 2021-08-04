@@ -241,8 +241,8 @@ def step(partition):
     else:
         return partition.parent["step"] + 1
 
-def make_partition_from_districtr_csv(state, graph, file, unit_col="Code-2"):
-    df = pd.read_csv(f"assignments/{file}.csv", header=None)
+def make_partition_from_districtr_csv(state, graph, file, unit_col="Code-2", folder="assignments"):
+    df = pd.read_csv(f"{folder}/{file}.csv", header=None)
     df.columns = [unit_col, "district"]
     unit_to_node = {graph.nodes[n][unit_col]:n for n in graph.nodes}
     unit_to_dist = dict(zip(df[unit_col], df["district"]))
@@ -264,7 +264,7 @@ def make_partition_from_districtr_csv(state, graph, file, unit_col="Code-2"):
     partition = Partition(graph, assignment=assignment, updaters=updaters)
     return partition
 
-def save_partition_as_districtr_csv(graph, partition, unit_col, filename):
+def save_partition_as_districtr_csv(graph, partition, unit_col, filename, folder="assignments"):
     unit_to_node = {graph.nodes[i][unit_col]:i for i in graph.nodes}
     assignment = partition.assignment
     csv = {}
@@ -273,9 +273,9 @@ def save_partition_as_districtr_csv(graph, partition, unit_col, filename):
         unit_node = unit_to_node[unit]
         csv[unit] = partition.assignment[unit_node]
     
-    if not os.path.exists("assignments/"):
-        os.makedirs("assignments/")
-    with open(f"assignments/{filename}.csv", "w") as f:
+    if not os.path.exists(f"{folder}/"):
+        os.makedirs(f"{folder}/")
+    with open(f"{folder}/{filename}.csv", "w") as f:
         for key in csv.keys():
             f.write(f"{key},{csv[key]}\n")
     f.close()
